@@ -49,7 +49,7 @@ const Dashboard = () => {
   // Handle New Task: POST
   const newTaskAPI = async (e) => {
     e.preventDefault();
-    console.log('newTaskAPI ', e.target.task.value);
+    if (isLoading) return;
     try {
       setIsLoading(true);
       const res = await postApi(TASKS_URL, { name: e.target.task.value });
@@ -57,13 +57,15 @@ const Dashboard = () => {
       console.log('ADD task list ', res);
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsLoading(false);
     }
     setShowNewTask(false);
   };
 
   // Handle Edit Task: PUT
   const editTaskAPI = async (data) => {
-    console.log('item ', task);
+    if (isLoading) return;
     try {
       setIsLoading(true);
       const res = await putApi(`${TASKS_URL}/${data._id}`, data);
@@ -72,6 +74,8 @@ const Dashboard = () => {
       console.log('Edit task list ', res);
     } catch (err) {
       console.log(err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -83,7 +87,6 @@ const Dashboard = () => {
 
   // Handle Edit Task: PUT
   const deleteTaskAPI = async (item) => {
-    console.log('Delete task  ', item);
     try {
       setIsLoading(true);
       const res = await deleteApi(`${TASKS_URL}/${item._id}`);

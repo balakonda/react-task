@@ -15,7 +15,7 @@ const Login = () => {
   // Login API: POST
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (id && name) {
+    if (id && name && !isLoading) {
       try {
         setIsLoading(true);
         const res = await postApi(LOGIN_URL, {
@@ -25,8 +25,10 @@ const Login = () => {
         setSessionStorage(USER_SESSION_KEY, res, true);
         history.push('/dashboard');
       } catch (err) {
-        setIsLoading(false);
+        console.log(err);
         throw err;
+      } finally {
+        setIsLoading(false);
       }
     }
   };
