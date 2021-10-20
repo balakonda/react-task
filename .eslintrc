@@ -1,4 +1,4 @@
-module.exports = {
+{
   env: {
     commonjs: true,
     node: true,
@@ -37,4 +37,4 @@ module.exports = {
       version: 'latest', // "detect" automatically picks the version you have installed.
     },
   },
-};
+}
