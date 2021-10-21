@@ -10,6 +10,11 @@ const useStyles = createUseStyles({
   },
 });
 
+/**
+ * Overlay component
+ * @param isOpen Show/Hide overlay
+ * @param children Body of the Modal
+ */
 const Modal = ({ isOpen, children }) => {
   const classes = useStyles();
   if (!isOpen) return null;

@@ -2,6 +2,7 @@ import React from 'react';
 import CustomCard from '../Common/CustomCard';
 import TaskList from './TaskList';
 import { createUseStyles } from 'react-jss';
+import PieChart from '../Common/PieChart';
 
 const useStyles = createUseStyles({
   dashboardTop: {
@@ -19,6 +20,10 @@ const useStyles = createUseStyles({
 
 const DashboardTop = ({ dashboard }) => {
   const classes = useStyles();
+
+  const getAngle = () => {
+    return Math.round(360 * (dashboard.tasksCompleted / dashboard.totalTasks));
+  };
 
   return (
     <div className={classes.dashboardTop}>
@@ -39,8 +44,10 @@ const DashboardTop = ({ dashboard }) => {
           completeTask=""
         />
       </CustomCard>
-      <div className="card myCard"></div>
+      <CustomCard title="">
+        <PieChart angle={getAngle()} text="Completed Tasks" />
+      </CustomCard>
     </div>
   );
 };
-export default DashboardTop;
+export default React.memo(DashboardTop);

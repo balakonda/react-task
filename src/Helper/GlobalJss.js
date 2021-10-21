@@ -13,7 +13,7 @@ const useStyles = createUseStyles({
       marginTop: '72px',
       padding: '15px 0',
       height: 'calc(100vh - 72px)',
-      '& > *': {
+      '& > section': {
         '@media only screen and (min-width: 768px)': {
           padding: '0 10%',
         },

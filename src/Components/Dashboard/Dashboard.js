@@ -7,6 +7,8 @@ import { createUseStyles } from 'react-jss';
 import SearchInput from '../Common/Search';
 import MiniPopup from '../Common/MiniPopup';
 import DashboardTop from './DashboardTop';
+import MyToast from '../Common/Toast';
+import Skeleton from '../Common/Skeleton';
 
 const useStyles = createUseStyles({
   dashboardBottom: {
@@ -39,6 +41,8 @@ const useStyles = createUseStyles({
 const Dashboard = () => {
   const classes = useStyles();
   const [isVisible, setVisibility] = useState(null);
+  const [showToast, setShowToast] = useState(null);
+  const [toastContent, setToastContent] = useState({});
   const [showNewTask, setShowNewTask] = useState(false);
   const [task, setTask] = useState();
   const [taskList, setTaskList] = useState([]);
@@ -46,19 +50,24 @@ const Dashboard = () => {
   const [search, setSearch] = useState('');
   const [isLoading, setIsLoading] = React.useState(false);
 
+  const toastHandle = (type, header, msg) => {
+    setShowToast(false);
+    setShowToast(true);
+    setIsLoading(false);
+    setToastContent({ type, header, msg });
+  };
   // Handle New Task: POST
   const newTaskAPI = async (e) => {
     e.preventDefault();
-    if (isLoading) return;
+    const value = e.target.task.value;
+    if (isLoading | !value) return;
+    setIsLoading(true);
     try {
-      setIsLoading(true);
-      const res = await postApi(TASKS_URL, { name: e.target.task.value });
+      const res = await postApi(TASKS_URL, { name: value });
       loadInitialApi();
-      console.log('ADD task list ', res);
+      toastHandle('success', 'New Task', res.msg);
     } catch (err) {
-      console.log(err);
-    } finally {
-      setIsLoading(false);
+      toastHandle('danger', 'New Task', err.statusText || 'Unknown');
     }
     setShowNewTask(false);
   };
@@ -66,52 +75,48 @@ const Dashboard = () => {
   // Handle Edit Task: PUT
   const editTaskAPI = async (data) => {
     if (isLoading) return;
+    setIsLoading(true);
     try {
-      setIsLoading(true);
       const res = await putApi(`${TASKS_URL}/${data._id}`, data);
       loadInitialApi();
       setShowNewTask(false);
-      console.log('Edit task list ', res);
+      toastHandle('success', 'Edit Task', res.msg);
     } catch (err) {
-      console.log(err);
-    } finally {
-      setIsLoading(false);
+      toastHandle('danger', 'Edit Task', err.statusText || 'Unknown');
     }
   };
 
-  // Handle Edit Task: PUT
+  // Handle Edit Task event
   const editTaskSubmit = (e) => {
     e.preventDefault();
     editTaskAPI({ ...task, name: e.target.task.value });
   };
 
-  // Handle Edit Task: PUT
+  // Handle Delete Task: DELETE
   const deleteTaskAPI = async (item) => {
     try {
       setIsLoading(true);
       const res = await deleteApi(`${TASKS_URL}/${item._id}`);
       loadInitialApi();
-      console.log('Delete task list ', res);
+      toastHandle('success', 'Delete Task', res.msg);
     } catch (err) {
-      console.log(err);
+      toastHandle('danger', 'Delete Task', err.statusText || 'Unknown');
     }
     setShowNewTask(false);
   };
 
   const newTaskModal = (e) => {
     e.preventDefault();
-    setTask(undefined);
+    setTask('');
     setShowNewTask(true);
   };
 
   const editTaskEvent = (item) => {
-    console.log(item);
     setTask(item);
     setShowNewTask(true);
   };
 
   const completedTaskEvent = (item) => {
-    console.log('completedTaskEvent ', item);
     setTask(item);
     editTaskAPI({ ...item, completed: !item.completed });
   };
@@ -119,6 +124,7 @@ const Dashboard = () => {
   const loadInitialApi = () => {
     Promise.allSettled([getApi(DASHBOARD_URL), getApi(TASKS_URL)]).then(
       ([res1, res2]) => {
+        setIsLoading(false);
         setDashboard(res1.value);
         setTaskList(res2.value.tasks);
         setVisibility(true);
@@ -186,7 +192,7 @@ const Dashboard = () => {
     );
   };
 
-  if (!isVisible) return null;
+  if (!isVisible) return <Skeleton />;
 
   return (
     <>
@@ -196,6 +202,7 @@ const Dashboard = () => {
         title={task ? 'Edit Task' : '+ New Task'}
         task={task}
       />
+      <MyToast show={showToast} content={toastContent} />
       {dashboard?.totalTasks > 0 ? (
         <>{tasksContent()}</>
       ) : (

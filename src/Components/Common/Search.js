@@ -1,5 +1,9 @@
 import React from 'react';
 
+/**
+ * @param search Binding value for the input
+ * @param searchEvent Handle Change event in the Parent
+ */
 const SearchInput = ({ search, searchEvent }) => {
   return (
     <div className="input-group flex-nowrap">

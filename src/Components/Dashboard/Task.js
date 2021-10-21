@@ -6,7 +6,7 @@ const Task = ({ show, submit, title, task }) => {
 
   useEffect(() => {
     setTaskName(task?.name || '');
-  }, [task]);
+  }, [show]);
 
   if (!show) return null;
   return (

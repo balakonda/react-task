@@ -4,32 +4,40 @@ import { postApi } from '../../Helper/Api';
 import { USER_SESSION_KEY, LOGIN_URL, API_KEY } from '../../Helper/Constant';
 import { setSessionStorage } from '../../Helper/Storage';
 import MiniPopup from '../Common/MiniPopup';
+import MyToast from '../Common/Toast';
 
 const Login = () => {
   const [id, setId] = useState('');
   const [name, setName] = useState('');
-  const [isLoading, setIsLoading] = React.useState(false);
-
+  const [isLoading, setIsLoading] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastContent, setToastContent] = useState({});
   const history = useHistory();
 
+  const showErrorToast = (err) => {
+    setShowToast(false);
+    setIsLoading(false);
+    setShowToast(true);
+    setToastContent({
+      type: 'danger',
+      msg: err.statusText || 'Unknown',
+      header: 'Login',
+    });
+  };
   // Login API: POST
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (id && name && !isLoading) {
-      try {
-        setIsLoading(true);
-        const res = await postApi(LOGIN_URL, {
-          name,
-          apiKey: API_KEY,
-        });
-        setSessionStorage(USER_SESSION_KEY, res, true);
-        history.push('/dashboard');
-      } catch (err) {
-        console.log(err);
-        throw err;
-      } finally {
-        setIsLoading(false);
-      }
+      setIsLoading(true);
+      postApi(LOGIN_URL, {
+        name,
+        apiKey: API_KEY,
+      })
+        .then((res) => {
+          setSessionStorage(USER_SESSION_KEY, res, true);
+          history.push('/dashboard');
+        })
+        .catch(showErrorToast);
     }
   };
 
@@ -47,37 +55,40 @@ const Login = () => {
   };
 
   return (
-    <MiniPopup title="Login">
-      <form name="loginForm" onSubmit={handleSubmit}>
-        <div className="mb-2">
-          <input
-            name="id"
-            id="id"
-            className="form-control"
-            type="text"
-            value={id}
-            onChange={onFormInputChange}
-            placeholder="Id"
-            aria-label="User Id"
-          />
-        </div>
-        <div className="mb-2">
-          <input
-            name="name"
-            id="name"
-            className="form-control"
-            type="text"
-            value={name}
-            onChange={onFormInputChange}
-            placeholder="Name"
-            aria-label="User name"
-          />
-        </div>
-        <button type="submit" className="btn btn-primary w-100">
-          Login
-        </button>
-      </form>
-    </MiniPopup>
+    <>
+      <MyToast show={showToast} content={toastContent} />
+      <MiniPopup title="Login">
+        <form name="loginForm" onSubmit={handleSubmit}>
+          <div className="mb-2">
+            <input
+              name="id"
+              id="id"
+              className="form-control"
+              type="text"
+              value={id}
+              onChange={onFormInputChange}
+              placeholder="Id"
+              aria-label="User Id"
+            />
+          </div>
+          <div className="mb-2">
+            <input
+              name="name"
+              id="name"
+              className="form-control"
+              type="text"
+              value={name}
+              onChange={onFormInputChange}
+              placeholder="Name"
+              aria-label="User name"
+            />
+          </div>
+          <button type="submit" className="btn btn-primary w-100">
+            Login
+          </button>
+        </form>
+      </MiniPopup>
+    </>
   );
 };
 

@@ -1,5 +1,10 @@
 import React from 'react';
 
+/**
+ * Mini Modal component
+ * @param title Title for the modal
+ * @param children Body of the modal
+ */
 const MiniPopup = ({ title, children }) => {
   return (
     <div className="fullScreen">
@@ -10,4 +15,4 @@ const MiniPopup = ({ title, children }) => {
     </div>
   );
 };
-export default MiniPopup;
+export default React.memo(MiniPopup);

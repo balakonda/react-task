@@ -68,6 +68,7 @@ const TaskList = ({ list, editable, editTask, deleteTask, completeTask }) => {
           {editable ? (
             <div>
               <a
+                href="#"
                 onClick={(e) => {
                   e.preventDefault();
                   editTask(item);
@@ -76,6 +77,7 @@ const TaskList = ({ list, editable, editTask, deleteTask, completeTask }) => {
                 <i className="fas fa-pen"></i>
               </a>
               <a
+                href="#"
                 onClick={(e) => {
                   e.preventDefault();
                   deleteTask(item);

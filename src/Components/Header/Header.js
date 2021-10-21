@@ -41,7 +41,6 @@ const PageHeader = () => {
 
   const getUserProfile = () => {
     const user = getUserData();
-    console.log('profile ', user);
     return user ? (
       <div className={classes.profile}>
         <img
@@ -53,10 +52,10 @@ const PageHeader = () => {
       </div>
     ) : null;
   };
+
   React.useEffect(() => {
     setPath(location.pathname);
     if (location.pathname === '/') {
-      console.log('removeSession', location.pathname);
       removeSessionStorage(USER_SESSION_KEY);
     }
   }, [location]);

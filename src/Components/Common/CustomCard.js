@@ -13,6 +13,11 @@ const useStyles = createUseStyles({
   },
 });
 
+/**
+ * Customised Card component
+ * @param title Title for the card
+ * @param children Body of the card
+ */
 const CustomCard = ({ title, children }) => {
   const classes = useStyles();
   return (
@@ -25,4 +30,4 @@ const CustomCard = ({ title, children }) => {
   );
 };
 
-export default CustomCard;
+export default React.memo(CustomCard);
